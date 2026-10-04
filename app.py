@@ -11,7 +11,7 @@ import pandas as pd
 import joblib as jb
 import streamlit as st
 
-st.set_page_config(page_title="Dépôt à terme", page_icon="💶", layout="wide")
+st.set_page_config(page_title="Dépôt à terme", page_icon="💳", layout="centered")
 
 
 # ---------- Objets issus du notebook (chargés une seule fois) ----------
@@ -53,18 +53,11 @@ def Pred_func_csv(fichier):
     return tableau
 
 
-# ---------- Barre latérale ----------
-with st.sidebar:
-    st.header("À propos")
-    st.write("Données d'une campagne de marketing téléphonique d'une banque portugaise (UCI). "
-             "Sept algorithmes ont été comparés ; le meilleur sur la validation est utilisé ici.")
-    st.caption("Projet Machine Learning — classification (TP2)")
+st.title("💳 Souscription à un dépôt à terme")
+st.caption("Le client contacté va-t-il souscrire ? Prédiction à partir de son profil et de l'appel.")
+onglet_un, onglet_csv = st.tabs(["Un client", "Fichier CSV"])
 
-st.title("💶 Ce client va-t-il souscrire un dépôt à terme ?")
-choix = st.radio("Mode", ["Un client", "Un fichier CSV"], horizontal=True)
-
-if choix == "Un client":
-    st.subheader("Profil du client")
+with onglet_un:
     c1, c2, c3 = st.columns(3)
     with c1:
         age = st.number_input("Âge", 17, 100, 40)
@@ -87,14 +80,15 @@ if choix == "Un client":
     with c5:
         previous = st.number_input("Contacts lors des campagnes précédentes", 0, 10, 0)
 
-    if st.button("Lancer la prédiction", type="primary"):
+    if st.button("Prédire", type="primary", use_container_width=True):
         try:
             reponse = Pred_func(age, job, marital, education, housing, loan, contact, month,
                                 day_of_week, duration, campaign, pdays, previous, poutcome)
-            st.metric("Décision estimée", TRADUCTION.get(reponse, reponse))
+            resultat = TRADUCTION.get(reponse, reponse)
+            st.success(f"**Décision estimée :** {resultat}")
         except Exception as erreur:
             st.error(f"Prédiction impossible : {erreur}")
-else:
+with onglet_csv:
     st.info("Colonnes attendues, dans cet ordre : age, job, marital, education, housing, loan, contact, "
             "month, day_of_week, duration, campaign, pdays, previous, poutcome.")
     fichier = st.file_uploader("Choisir un fichier CSV", type="csv")
@@ -102,7 +96,7 @@ else:
         try:
             tableau = Pred_func_csv(fichier)
             st.dataframe(tableau, use_container_width=True)
-            st.download_button("Récupérer les résultats (CSV)", tableau.to_csv(index=False).encode("utf-8"),
+            st.download_button("Télécharger les résultats", tableau.to_csv(index=False).encode("utf-8"),
                                "resultats_clients.csv", "text/csv")
         except Exception as erreur:
             st.error(f"Fichier non traité : {erreur}")
