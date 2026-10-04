@@ -1,0 +1,16 @@
+# ------------------------------------------------------------
+# Souscription à un dépôt à terme (classification, TP2) — dépendances de l'application Streamlit
+# Les versions de la partie « modèle » doivent être celles qui
+# ont servi à créer les fichiers .joblib (cellule « Versions des
+# bibliothèques » à la fin du notebook).
+# ------------------------------------------------------------
+
+# Application
+streamlit
+
+# Modèle et préparation des données
+scikit-learn==1.6.1
+xgboost==3.4.1
+numpy==2.5.3
+pandas==2.3.3
+joblib==1.6.0
